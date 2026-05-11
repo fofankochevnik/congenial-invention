@@ -40,14 +40,6 @@ def alice():
     is_new = body.get("session", {}).get("new", False)
     command = body.get("request", {}).get("command", "").lower()
 
-    if is_new and not command:
-        return make_response(
-            "Это навык оповещения об угрозе БПЛА в Липецке. "
-            "Чтобы узнать статус, скажите: скажи уровень угрозы атаки БПЛА. "
-            "Для списка всех команд скажите помощь.",
-            end=False
-        )
-
     if any(w in command for w in ["помощь", "что ты умеешь", "команды"]):
         return make_response(
             "Я умею показывать текущий уровень угрозы БПЛА в Липецке. "
@@ -58,6 +50,14 @@ def alice():
         )
 
     level = get_level()
+    if is_new and not command:
+        return make_response(
+            f"Сейчас {level} уровень опасности БПЛА в Липецкой области. "
+            "Чтобы обновить или уточнить, скажите: уровень угрозы. "
+            "Для списка команд скажите помощь.",
+            end=False
+        )
+
     return make_response(f"Сейчас {level} уровень опасности БПЛА в Липецкой области.")
 
 @app.route("/ping")
